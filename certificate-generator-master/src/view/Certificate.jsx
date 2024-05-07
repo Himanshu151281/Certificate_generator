@@ -3,6 +3,7 @@ import styles from "../assets/styles/certificateGenerator.module.scss";
 import logo from "../assets/image.png";
 import html2canvas from "html2canvas";
 import React, { useState } from "react";
+import jsPDF from 'jspdf';
 
 const Certificate = ({
   name,
@@ -17,11 +18,17 @@ const Certificate = ({
   const [approved, setApproved] = useState(false);
 
   const takeScreenshot = () => {
-    html2canvas(document.body).then(function (canvas) {
-      var link = document.createElement("a");
-      link.download = "certificate.pdf";
-      link.href = canvas.toDataURL();
-      link.click();
+    html2canvas(document.body, { scale: 0.5 }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('landscape', 'mm', 'a4'); // A4 size
+  
+      const leftMargin = -20; // increase to crop more from the left
+      const topMargin = 10; // increase to crop more from the top
+      const imgWidth = pdf.internal.pageSize.getWidth() - 40; // decrease to crop more from the right
+      const imgHeight = ((canvas.height - 40) * imgWidth) / canvas.width; // decrease to crop more from the bottom
+  
+      pdf.addImage(imgData, 'JPG', leftMargin, topMargin, imgWidth, imgHeight);
+      pdf.save("download.pdf");
     });
   };
 
