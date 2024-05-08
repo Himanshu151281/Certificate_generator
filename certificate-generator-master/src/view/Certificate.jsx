@@ -16,6 +16,10 @@ const Certificate = ({
   certificationId,
 }) => {
   const [approved, setApproved] = useState(false);
+  const [submissions, setSubmissions] = useState([]);
+  const [studentName, setStudentName] = useState(''); // renamed from 'name' to 'studentName'
+  const [studentCourse, setCourse] = useState('');
+  const [studentEmail, setEmail] = useState('');
 
   const takeScreenshot = () => {
     html2canvas(document.body, { scale: 0.5 }).then(canvas => {
@@ -39,20 +43,53 @@ const Certificate = ({
   const handleDecline = () => {
     setApproved(false);
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSubmissions([...submissions, { name: studentName, studentCourse, studentEmail }]);
+    setStudentName('');
+    setCourse('');
+    setEmail('');
+  };
+
   return (
     // style={{backgroundColor: "lightblue"}}
     <>
       {!approved ? (
-        <div style={{backgroundColor: "White", paddingLeft: 550 , paddingRight: 550 , paddingTop: 100 , paddingBottom: 350}}>
+        <div
+          style={{
+            backgroundColor: "White",
+            paddingLeft: 550,
+            paddingRight: 550,
+            paddingTop: 100,
+            paddingBottom: 350,
+          }}
+        >
+
           <div>
             <p>Name: {name}</p>
 
             <p>Course: {course}</p>
-            
+
             <p>Email: {email}</p>
-          </div>
-          <button onClick={handleApprove} >Approve</button>
+          </div> 
+          <form onSubmit={handleSubmit}>
+            {/* <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Name" />
+            <input type="text" value={course} onChange={e => setCourse(e.target.value)} placeholder="Course" />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" /> */}
+            <button type="submit">Save</button>
+          </form>
+          <button onClick={handleApprove}>Approve</button>
           <button onClick={handleDecline}>Decline</button>
+          {submissions.map((submission, index) => (
+
+
+            <div key={index}>
+              <p>Name: {name}</p>
+              <p>Course: {course}</p>
+              <p>Email: {email}</p>
+            </div>
+          ))}
         </div>
       ) : (
         <div className={styles.certificateWrapper}>
